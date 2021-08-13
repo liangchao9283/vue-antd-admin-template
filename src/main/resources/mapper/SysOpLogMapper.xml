@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imcore.admintemplate.mapper.SysOpLogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.imcore.admintemplate.model.bo.SysOpLog">
+    <result column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="op_type" property="opType" />
+        <result column="success" property="success" />
+        <result column="message" property="message" />
+        <result column="ip" property="ip" />
+        <result column="location" property="location" />
+        <result column="browser" property="browser" />
+        <result column="os" property="os" />
+        <result column="url" property="url" />
+        <result column="class_name" property="className" />
+        <result column="method_name" property="methodName" />
+        <result column="req_method" property="reqMethod" />
+        <result column="param" property="param" />
+        <result column="result" property="result" />
+        <result column="op_time" property="opTime" />
+        <result column="username" property="username" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,
+        name,
+        op_type,
+        success, message, ip, location, browser, os, url, class_name,method_name,req_method,param,result,op_time,username
+    </sql>
+    <select id="selectList" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from sys_op_log
+        <where>
+            <if test="dto.name != null and dto.name != '' ">
+                and name like concat('%',#{dto.name},'%')
+            </if>
+            <if test="dto.opType != null">
+                and op_type = #{dto.opType}
+            </if>
+            <if test="dto.success != null and dto.success != '' ">
+                and success = #{dto.success}
+            </if>
+            <if test="dto.searchBeginTime != null and dto.searchBeginTime != '' and dto.searchEndTime != null and dto.searchEndTime != '' ">
+                and date_format(op_time,'%Y-%m-%d %H:%i:%s') &gt;= #{dto.searchBeginTime}
+                and date_format(op_time,'%Y-%m-%d %H:%i:%s') &lt;= #{dto.searchEndTime}
+            </if>
+        </where>
+        order by op_time desc
+    </select>
+
+
+</mapper>

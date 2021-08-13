@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imcore.admintemplate.mapper.SysVisLogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.imcore.admintemplate.model.bo.SysVisLog">
+    <result column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="success" property="success" />
+        <result column="message" property="message" />
+        <result column="ip" property="ip" />
+        <result column="location" property="location" />
+        <result column="browser" property="browser" />
+        <result column="os" property="os" />
+        <result column="vis_type" property="visType" />
+        <result column="vis_time" property="visTime" />
+        <result column="username" property="username" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,
+        name,
+        success, message, ip, location, browser, os, vis_type, vis_time, username
+    </sql>
+    <select id="selectList" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from sys_vis_log
+        <where>
+            <if test="dto.name != null and dto.name != '' ">
+                and name like concat('%',#{dto.name},'%')
+            </if>
+            <if test="dto.visType != null">
+                and vis_type = #{dto.visType}
+            </if>
+            <if test="dto.success != null and dto.success != '' ">
+                and success = #{dto.success}
+            </if>
+            <if test="dto.searchBeginTime != null and dto.searchBeginTime != '' and dto.searchEndTime != null and dto.searchEndTime != '' ">
+                and date_format(vis_time,'%Y-%m-%d %H:%i:%s') &gt;= #{dto.searchBeginTime}
+                and date_format(vis_time,'%Y-%m-%d %H:%i:%s') &lt;= #{dto.searchEndTime}
+            </if>
+        </where>
+        order by vis_time desc
+    </select>
+
+
+</mapper>

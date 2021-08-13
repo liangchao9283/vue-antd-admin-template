@@ -1,0 +1,9 @@
+#开发环境
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/admin-template?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: 123456
+    #druid:
+    driver-class-name: com.mysql.jdbc.Driver

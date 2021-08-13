@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imcore.admintemplate.mapper.SysRoleMenuMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.imcore.admintemplate.model.bo.SysRoleMenu">
+    <result column="id" property="id" />
+    <result column="created_on" property="createdOn" />
+    <result column="updated_on" property="updatedOn" />
+        <result column="role_id" property="roleId" />
+        <result column="menu_id" property="menuId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,
+        created_on,
+        updated_on,
+        role_id, menu_id
+    </sql>
+    <select id="roleOwnMenu" resultType="java.lang.String">
+        select menu_id from sys_role_menu where role_id = #{roleId}
+    </select>
+
+    <select id="selectInterfacePermissionsByRoleIds" resultType="java.lang.String">
+        select sm.permission_code
+        from sys_role_menu srm
+        left join sys_menu sm on sm.id = srm.menu_id
+        where sm.type in (1,2)
+        and srm.role_id in
+            <foreach collection="roleIds" item="roleId" index="index" open="(" close=")" separator=",">
+                #{roleId}
+            </foreach>
+        group by sm.id
+    </select>
+
+
+
+    <select id="selectOnlyMenuByRoleIds" resultType="com.imcore.admintemplate.model.bo.SysMenu">
+        select sm.id,sm.parent_id as parentId,sm.type,sm.name,sm.path,sm.component,sm.icon,sm.sort,sm.visible,sm.permission_code as permissionCode
+        from sys_role_menu srm
+        left join sys_menu sm on sm.id = srm.menu_id
+        where sm.type in (0,1)
+        and srm.role_id in
+        <foreach collection="roleIds" item="roleId" index="index" open="(" close=")" separator=",">
+            #{roleId}
+        </foreach>
+        group by sm.id
+        order by sm.sort
+    </select>
+
+    <select id="selectPageMenuByRoleIds" resultType="com.imcore.admintemplate.model.bo.SysMenu">
+        select sm.id,sm.parent_id as parentId,sm.type,sm.name,sm.path,sm.component,sm.icon,sm.sort,sm.visible,sm.permission_code as permissionCode
+        from sys_role_menu srm
+        left join sys_menu sm on sm.id = srm.menu_id
+        where sm.type = 1
+        and srm.role_id in
+        <foreach collection="roleIds" item="roleId" index="index" open="(" close=")" separator=",">
+            #{roleId}
+        </foreach>
+        group by sm.id
+    </select>
+
+    <select id="selectPermissionsByRoleIdsAndMenuId" resultType="com.imcore.admintemplate.model.bo.SysMenu">
+        select sm.id,sm.parent_id as parentId,sm.type,sm.name,sm.path,sm.component,sm.icon,sm.sort,sm.visible,sm.permission_code as permissionCode
+        from sys_role_menu srm
+        left join sys_menu sm on sm.id = srm.menu_id
+        where sm.type = 2
+        and srm.role_id in
+        <foreach collection="roleIds" item="roleId" index="index" open="(" close=")" separator=",">
+            #{roleId}
+        </foreach>
+        <if test="menuId != null and menuId != ''">
+            and sm.parent_id = #{menuId}
+        </if>
+        group by sm.id
+    </select>
+
+    <delete id="deleteByRoleId">
+        delete from sys_role_menu where role_id = #{roleId}
+    </delete>
+
+    <delete id="deleteByMenuId">
+        delete from sys_role_menu where menu_id = #{menuId}
+    </delete>
+
+
+</mapper>

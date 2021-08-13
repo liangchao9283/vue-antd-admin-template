@@ -1,0 +1,27 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: imcore-maintain
+  jackson.date-format: yyyy-MM-dd HH:mm:ss
+  jackson.time-zone: GMT+8
+  jackson.serialization.write-dates-as-timestamps: false
+server:
+  servlet:
+    context-path: /
+  port: 2314
+
+logging:
+  file:
+    #日志文件保存路径，不指定时，默认使用“./logs”作为保存路径，支持相对路径和绝对路径
+    path: ./logs
+    #日志文件名的前缀，不指定时默认使用“spring”作为日志文件名前缀
+    name: admin-template
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: false
+  global-config:
+    banner: false
